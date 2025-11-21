@@ -115,7 +115,8 @@ const newDetailRows: any[] = [];   // FIX ADDED HERE
 
 for (const item of details) {
   const oldRow = oldDetails.find((d) => d.po_sr === item.po_sr);
-  const carriedRecQty = oldRow ? oldRow.po_rec_qty : 0;
+  // const carriedRecQty = oldRow ? oldRow.po_rec_qty : 0;
+  const carriedRecQty = 0;  
 
   const sub = Number((item.po_qty * item.po_rate).toFixed(2));
   totalAmount += sub;
@@ -127,9 +128,9 @@ for (const item of details) {
     po_qty: item.po_qty,
     po_rate: item.po_rate,
     po_sub_total: sub,
-    po_rec_qty: carriedRecQty,
+    po_rec_qty: 0,
     po_adj_qty: 0,
-    po_pending_qty: item.po_qty - carriedRecQty,
+    po_pending_qty: item.po_qty,
   });
 }
 
