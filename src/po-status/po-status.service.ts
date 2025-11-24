@@ -14,6 +14,9 @@ export class PoStatusService {
       throw new NotFoundException('PO details not found');
     }
 
+
+    
+
     const items = rows.map((r) => {
       const po_qty = Number(r.po_qty);
       const po_rec_qty = Number(r.po_rec_qty || 0);
