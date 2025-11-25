@@ -1,2 +1,1 @@
-import express from 'express';
-export default function handler(req: express.Request, res: express.Response): Promise<any>;
+export default function handler(req: any, res: any): Promise<any>;

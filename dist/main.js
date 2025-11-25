@@ -9,15 +9,14 @@ const express_1 = require("express");
 const swagger_1 = require("@nestjs/swagger");
 let cachedApp = null;
 async function createApp() {
-    var _a;
     if (cachedApp)
         return cachedApp;
     const expressApp = (0, express_1.default)();
     try {
         const app = await core_1.NestFactory.create(app_module_1.AppModule, new platform_express_1.ExpressAdapter(expressApp), {
-            logger: ['error', 'warn', 'log', 'debug'],
+            logger: ['log', 'debug', 'warn', 'error'],
         });
-        app.useGlobalPipes(new common_1.ValidationPipe({ whitelist: true, forbidNonWhitelisted: false }));
+        app.useGlobalPipes(new common_1.ValidationPipe({ whitelist: true }));
         const config = new swagger_1.DocumentBuilder()
             .setTitle('ERP API Docs')
             .setDescription('Swagger documentation for ERP system')
@@ -31,7 +30,7 @@ async function createApp() {
         return expressApp;
     }
     catch (err) {
-        console.error('createApp() failed:', err instanceof Error ? (_a = err.stack) !== null && _a !== void 0 ? _a : err.message : err);
+        console.error('❌ ERROR during createApp():', err);
         throw err;
     }
 }
@@ -41,16 +40,15 @@ async function handler(req, res) {
         return app(req, res);
     }
     catch (err) {
-        console.error('handler caught error:', err);
-        res.statusCode = 500;
-        res.end('Internal Server Error');
+        console.error('❌ ERROR during handler():', err);
+        res.status(500).send('Internal Server Error');
     }
 }
 if (process.env.VERCEL !== '1') {
     (async () => {
         try {
             const app = await core_1.NestFactory.create(app_module_1.AppModule);
-            app.useGlobalPipes(new common_1.ValidationPipe({ whitelist: true, forbidNonWhitelisted: false }));
+            app.useGlobalPipes(new common_1.ValidationPipe({ whitelist: true }));
             const config = new swagger_1.DocumentBuilder()
                 .setTitle('ERP API Docs')
                 .setDescription('Swagger documentation for ERP system')
@@ -59,13 +57,11 @@ if (process.env.VERCEL !== '1') {
                 .build();
             const document = swagger_1.SwaggerModule.createDocument(app, config);
             swagger_1.SwaggerModule.setup('api-docs', app, document);
-            const port = process.env.PORT ? Number(process.env.PORT) : 3000;
-            await app.listen(port);
-            console.log(`Local server listening on ${port}`);
+            await app.listen(3000);
+            console.log(`Local running at http://localhost:3000/api-docs`);
         }
         catch (err) {
-            console.error('Local bootstrap failed:', err);
-            process.exit(1);
+            console.error('❌ Local bootstrap error:', err);
         }
     })();
 }
